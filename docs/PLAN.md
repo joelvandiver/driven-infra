@@ -238,7 +238,7 @@ GitHub Actions on every PR: `terraform fmt -check` + `validate` + `tflint`, `ans
 
 ## 5. Sequencing, effort & session plan
 
-Phases are strictly ordered by dependency: 0 → 1 → 2 → 4(devstack) can proceed with no Azure account touched; 3 → 4(aks) can start any time after 0. A sensible rhythm is one phase per working session, with you running the desktop-side commands and me authoring/debugging alongside:
+Phases are strictly ordered by dependency: 0 → 1 → 2 → 4(devstack) can proceed with no Azure account touched; 3 → 4(aks) can start any time after 0. A sensible rhythm is one phase per working session. Working mode (per `CLAUDE.md`): Joel implements everything; Claude breaks each phase into small tasks via the `breakdown` skill, guides, and reviews — every task ends with a verification Joel runs himself:
 
 | Phase | Rough effort | Azure cost incurred |
 |---|---|---|
@@ -257,4 +257,4 @@ Phases are strictly ordered by dependency: 0 → 1 → 2 → 4(devstack) can pro
 
 ## 7. Immediate next step
 
-Phase 0: I scaffold the repo — directory tree, `bootstrap.sh`, `versions.yml`, the `workstation_tools` role, `Makefile`, and `docs/00-workstation.md` — and hand it to you to push to `driven-infra` and run on your desktop. Say the word and I'll start.
+Phase 0: ask Claude to break the phase down (`breakdown` skill). You'll build the directory tree, `bootstrap.sh`, `versions.yml`, the `workstation_tools` role, `Makefile`, and `docs/00-workstation.md` yourself, task by task, verifying each one as you go — with Claude guiding and reviewing, never implementing (see `CLAUDE.md`).
