@@ -8,13 +8,13 @@
 
 ## 1. How your requirements map to the design
 
-| Requirement | How the plan satisfies it |
-|---|---|
+| Requirement                                                               | How the plan satisfies it                                                                                                                                                          |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Local devstack, as close to prod as possible, 1 control plane + 2 workers | Three real Ubuntu VMs (Vagrant + libvirt/KVM) bootstrapped into a cluster with **kubeadm** — the same components (containerd, kubelet, CNI) a production cluster runs. Phases 1–2. |
-| Azure infrastructure with AKS via Terraform | Terraform with a remote **azurerm** state backend builds the VNet + AKS cluster (2 worker nodes, managed control plane). Phase 3. |
-| Use Ansible where it makes sense | Ansible owns everything that is *machine configuration*: your workstation's tooling, and turning bare VMs into Kubernetes nodes. Terraform owns *cloud resources*. Phase 0 and 2. |
-| All prerequisite tools in the IaC | A single tiny `bootstrap.sh` installs Ansible; from then on an Ansible playbook installs and pins every other tool (Terraform, Vagrant, libvirt, kubectl, Helm, az, …). Phase 0. |
-| Phased, instructive | Six phases, each with a goal, the files it adds, a "definition of done" you can verify, and the concepts it teaches. |
+| Azure infrastructure with AKS via Terraform                               | Terraform with a remote **azurerm** state backend builds the VNet + AKS cluster (2 worker nodes, managed control plane). Phase 3.                                                  |
+| Use Ansible where it makes sense                                          | Ansible owns everything that is *machine configuration*: your workstation's tooling, and turning bare VMs into Kubernetes nodes. Terraform owns *cloud resources*. Phase 0 and 2.  |
+| All prerequisite tools in the IaC                                         | A single tiny `bootstrap.sh` installs Ansible; from then on an Ansible playbook installs and pins every other tool (Terraform, Vagrant, libvirt, kubectl, Helm, az, …). Phase 0.   |
+| Phased, instructive                                                       | Six phases, each with a goal, the files it adds, a "definition of done" you can verify, and the concepts it teaches.                                                               |
 
 ### The mental model: who owns what
 
@@ -152,11 +152,11 @@ The `workstation_tools` role installs and pins: Terraform (HashiCorp apt repo), 
 
 A single `Vagrantfile` defines the cluster from a loop over a node table:
 
-| VM | Role (later) | IP | vCPU | RAM |
-|---|---|---|---|---|
-| cp-1 | control plane | 10.10.0.10 | 2 | 4 GB |
-| worker-1 | worker | 10.10.0.11 | 2 | 4 GB |
-| worker-2 | worker | 10.10.0.12 | 2 | 4 GB |
+| VM       | Role (later)  | IP         | vCPU | RAM  |
+| -------- | ------------- | ---------- | ---- | ---- |
+| cp-1     | control plane | 10.10.0.10 | 2    | 4 GB |
+| worker-1 | worker        | 10.10.0.11 | 2    | 4 GB |
+| worker-2 | worker        | 10.10.0.12 | 2    | 4 GB |
 
 (~12 GB RAM total while running; we'll trim if your desktop is tight.) Static IPs matter because the Ansible inventory in `inventories/devstack/hosts.yml` refers to them, and because kubeadm certificates embed the control-plane endpoint. The Ubuntu box version is pinned in `versions.yml` like everything else.
 
@@ -240,14 +240,14 @@ GitHub Actions on every PR: `terraform fmt -check` + `validate` + `tflint`, `ans
 
 Phases are strictly ordered by dependency: 0 → 1 → 2 → 4(devstack) can proceed with no Azure account touched; 3 → 4(aks) can start any time after 0. A sensible rhythm is one phase per working session. Working mode (per `CLAUDE.md`): Joel implements everything; Claude breaks each phase into small tasks via the `breakdown` skill, guides, and reviews — every task ends with a verification Joel runs himself:
 
-| Phase | Rough effort | Azure cost incurred |
-|---|---|---|
-| 0 Workstation bootstrap | 1 session | none |
-| 1 Devstack VMs | 1 session | none |
-| 2 kubeadm cluster | 1–2 sessions (the meaty one) | none |
-| 3 Terraform + AKS | 1–2 sessions | starts here (destroyable) |
-| 4 GitOps add-ons | 1–2 sessions | LB + disks marginal |
-| 5 CI & polish | 1 session | none |
+| Phase                   | Rough effort                 | Azure cost incurred       |
+| ----------------------- | ---------------------------- | ------------------------- |
+| 0 Workstation bootstrap | 1 session                    | none                      |
+| 1 Devstack VMs          | 1 session                    | none                      |
+| 2 kubeadm cluster       | 1–2 sessions (the meaty one) | none                      |
+| 3 Terraform + AKS       | 1–2 sessions                 | starts here (destroyable) |
+| 4 GitOps add-ons        | 1–2 sessions                 | LB + disks marginal       |
+| 5 CI & polish           | 1 session                    | none                      |
 
 ## 6. Known risks & gotchas (so they don't surprise us)
 
